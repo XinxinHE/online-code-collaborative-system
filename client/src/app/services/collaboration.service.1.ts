@@ -1,42 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Subject} from 'rxjs/Subject';
-import { Observable } from 'rxjs/Rx';
 import { COLORS } from '../../assets/colors';
 
 declare const io: any;
-declare const ace:any;
+declare const ace: any;
 @Injectable()
 export class CollaborationService {
-  problemListSocket: any;
   collaborationSocket: any;
   clientsInfo: Object = {};
   clientNum: number = 0;
-
-  // behaviour subject: must initialize with a value
-  private _problemsAndRooms = new Subject<any>();
   constructor() { }
-  
-  init():Observable<any> {
-    // namespace: /
-    this.problemListSocket = io(window.location.origin);
-
-    // problemsAndRooms: use arrow function to bind to this, otherwise not refer to Injectable
-    this.problemListSocket.on('getProblemsAndRooms', (problemsAndRooms) => { 
-        console.log('Rooms:  -----');
-        console.log(problemsAndRooms);
-        this._problemsAndRooms.next(problemsAndRooms);
-    });   
-    return this._problemsAndRooms.asObservable();
-  }
-
-  initEditor(editor: any, problemId: string): void {
-    /* location.orign: returns the protocol, hostname, and port number of a URL
-     * query: the query member is passed to the server on connection and parsed as a CGI style query string
+ 
+  init(editor: any, sessionId: string): void {
+    // location.orign: returns the protocol, hostname, and port number of a URL
+    /* The query member is passed to the server on connection and parsed as a CGI style query string
      * Retrieved by socket.handshake.query at the server side
-     */
-
-    // namespace: problemEditor 
-    this.collaborationSocket = io(window.location.origin + '/problemEditor', {query: 'problemId=' + problemId});
+     */ 
+    this.collaborationSocket = io(window.location.origin, {query: 'sessionId=' + sessionId});
 
     this.collaborationSocket.on('change', (delta: string) => {
       console.log('Collaboration: editor changed by ' + delta);

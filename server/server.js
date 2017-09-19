@@ -24,7 +24,6 @@ app.use(function(req, res) {
 const http = require('http');
 const socketIO = require('socket.io');
 const io = socketIO();
-
 const editorSocketService = require('./services/editorSocketService.js')(io);
 
 const server = http.createServer(app);
@@ -34,6 +33,9 @@ server.on('error', onError);
 server.on('listening', function() {
   console.log('listening to ' + server.address().port);
 });
+
+
+
 /* 
 const server1 = http.createServer(app);
 io.attach(server1);

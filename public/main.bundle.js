@@ -243,7 +243,7 @@ var EditorComponent = (function () {
     EditorComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.route.params.subscribe(function (params) {
-            _this.sessionId = params['id'];
+            _this.problemId = params['id'];
         });
         this.initEditor();
     };
@@ -253,7 +253,7 @@ var EditorComponent = (function () {
         this.editor.setTheme("ace/theme/eclipse");
         this.resetEditor();
         document.getElementsByTagName('textarea')[0].focus(); // cursor position
-        this.collaboration.init(this.editor, this.sessionId);
+        this.collaboration.initEditor(this.editor, this.problemId);
         // content change 
         this.editor.lastAppliedChange = null;
         this.editor.on('change', function (e) {
@@ -263,9 +263,10 @@ var EditorComponent = (function () {
             }
         });
         // cursor change 
+        // Ace keeps all the editor states (selection, scroll position, etc.) in editor.session
         this.editor.getSession().getSelection().on('changeCursor', function () {
             var cursor = _this.editor.getSession().getSelection().getCursor();
-            console.log('Cursor move', JSON.stringify(cursor));
+            // console.log('Cursor move', JSON.stringify(cursor));
             _this.collaboration.cursorMove(JSON.stringify(cursor));
         });
         // call restore buffer
@@ -549,7 +550,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/problem-list/problem-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <app-new-problem></app-new-problem>\n  <div class=\"list-group\">    \n    <a href=\"#\" class=\"list-group-item\" *ngFor=\"let problem of problems\"\n      [routerLink]=\"['/problems', problem.id]\">\n      <span class=\"{{'pull-left label difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}\">\n        {{problem.difficulty}}\n      </span>\n      <strong class=\"title\">{{problem.id}}. {{problem.name}}</strong>\n    </a>\n  </div>\n</div>\n"
+module.exports = "<div class=\"container\">\n  <app-new-problem></app-new-problem>\n  <div class=\"list-group\">    \n    <a class=\"list-group-item\" *ngFor=\"let problem of problems\"\n      [routerLink]=\"['/problems', problem.id]\">\n      <span class=\"{{'pull-left label difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}\">\n        {{problem.difficulty}}\n      </span>\n      <strong class=\"title\">{{problem.id}}. {{problem.name}} </strong>\n      <span *ngIf=\"problemsAndRooms && problemsAndRooms[problem.id]\">\n        Participant count: {{problemsAndRooms[problem.id].participants.length}}\n      </span>\n    </a>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -558,6 +559,7 @@ module.exports = "<div class=\"container\">\n  <app-new-problem></app-new-proble
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_collaboration_service__ = __webpack_require__("../../../../../src/app/services/collaboration.service.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProblemListComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -572,19 +574,32 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 
+
 var ProblemListComponent = (function () {
-    function ProblemListComponent(dataService) {
+    function ProblemListComponent(collaboration, dataService) {
+        this.collaboration = collaboration;
         this.dataService = dataService;
         this.problems = [];
     }
     ProblemListComponent.prototype.ngOnInit = function () {
         this.getProblems();
+        this.getProblemsAndRooms();
     };
     ProblemListComponent.prototype.getProblems = function () {
         var _this = this;
         //this.problems = this.dataService.getProblems(); 
         this.dataService.getProblems()
-            .subscribe(function (problems) { return _this.problems = problems; });
+            .subscribe(function (problems) {
+            _this.problems = problems;
+        });
+    };
+    ProblemListComponent.prototype.getProblemsAndRooms = function () {
+        var _this = this;
+        this.collaboration.init()
+            .subscribe(function (value) {
+            _this.problemsAndRooms = value;
+            console.dir(_this.problemsAndRooms);
+        });
     };
     return ProblemListComponent;
 }());
@@ -594,10 +609,11 @@ ProblemListComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/components/problem-list/problem-list.component.html"),
         styles: [__webpack_require__("../../../../../src/app/components/problem-list/problem-list.component.css")]
     }),
-    __param(0, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["f" /* Inject */])('data')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["f" /* Inject */])('data')),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_collaboration_service__["a" /* CollaborationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_collaboration_service__["a" /* CollaborationService */]) === "function" && _a || Object, Object])
 ], ProblemListComponent);
 
+var _a;
 //# sourceMappingURL=problem-list.component.js.map
 
 /***/ }),
@@ -607,7 +623,9 @@ ProblemListComponent = __decorate([
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__assets_colors__ = __webpack_require__("../../../../../src/assets/colors.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__ = __webpack_require__("../../../../rxjs/Subject.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__assets_colors__ = __webpack_require__("../../../../../src/assets/colors.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CollaborationService; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -620,14 +638,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
 var CollaborationService = (function () {
     function CollaborationService() {
         this.clientsInfo = {};
         this.clientNum = 0;
+        // behaviour subject: must initialize with a value
+        this._problemsAndRooms = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__["Subject"]();
     }
-    CollaborationService.prototype.init = function (editor, sessionId) {
+    CollaborationService.prototype.init = function () {
         var _this = this;
-        this.collaborationSocket = io(window.location.origin, { query: 'sessionId=' + sessionId });
+        // namespace: /
+        this.problemListSocket = io(window.location.origin);
+        // problemsAndRooms: use arrow function to bind to this, otherwise not refer to Injectable
+        this.problemListSocket.on('getProblemsAndRooms', function (problemsAndRooms) {
+            console.log('Rooms:  -----');
+            console.log(problemsAndRooms);
+            _this._problemsAndRooms.next(problemsAndRooms);
+        });
+        return this._problemsAndRooms.asObservable();
+    };
+    CollaborationService.prototype.initEditor = function (editor, problemId) {
+        /* location.orign: returns the protocol, hostname, and port number of a URL
+         * query: the query member is passed to the server on connection and parsed as a CGI style query string
+         * Retrieved by socket.handshake.query at the server side
+         */
+        var _this = this;
+        // namespace: problemEditor 
+        this.collaborationSocket = io(window.location.origin + '/problemEditor', { query: 'problemId=' + problemId });
         this.collaborationSocket.on('change', function (delta) {
             console.log('Collaboration: editor changed by ' + delta);
             delta = JSON.parse(delta);
@@ -651,7 +689,7 @@ var CollaborationService = (function () {
                 var css = document.createElement('style');
                 css.type = 'text/css';
                 css.innerHTML = '.editor_cursor_' + changeClientId
-                    + '{ position: absolute; background: ' + __WEBPACK_IMPORTED_MODULE_1__assets_colors__["a" /* COLORS */][_this.clientNum] + ';'
+                    + '{ position: absolute; background: ' + __WEBPACK_IMPORTED_MODULE_2__assets_colors__["a" /* COLORS */][_this.clientNum] + ';'
                     + 'z-index: 100; width: 3px !important;}';
                 document.body.appendChild(css);
                 _this.clientNum++;

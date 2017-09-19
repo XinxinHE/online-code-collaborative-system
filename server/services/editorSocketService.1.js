@@ -2,65 +2,59 @@ const redisClient = require('../modules/redisClient');
 const TIMEOUT_IN_SECONDS = 3600;
 
 module.exports = function(io) {
-    const collaborations = {}; // TODO: problemId > roomId, roomSerialNum > participants + cachedInstructions
-    const socketIdToProblemId = {};
-    const sessionPath = '/ojserver/'; // for redis
+    // const collaborations = {} ; // sessionId > participants + cachedInstructions
+    // const socketIdToSessionId = {};
+    // const sessionPath = '/ojserver/'; // for redis
 
+    const collaborations = {}; // problemId > roomId > participants + 
+    const participantIdToRoomId = {};
+    const roomPath = '/ojserver';
+    
     io.on('connection', (socket) => {
-        console.log("**********************");
-        console.log(collaborations);
-        socket.emit('getProblemsAndRooms', collaborations);
-    });
+        console.log(socket);
+        // const sessionId = socket.handshake.query['sessionId'];
+        // const roomId = 
+        socketIdToSessionId[socket.id] = sessionId;
 
-    io.of('/problemEditor').on('connection', (socket) => {
-        console.log("######### " + socket.id + " connected ############");        
-        const problemId = socket.handshake.query['problemId'];
-        socketIdToProblemId[socket.id] = problemId;
-
-        // if (!(problemId in collaborations)) {
-        //     collaborations[problemId] = {
+        // if (!(sessionId in collaborations)) {
+        //     collaborations[sessionId] = {
         //         'participants': []
         //     };
         // }
 
-        if (problemId in collaborations) {
+        if (sessionId in collaborations) {
             // there are users working on the code
-            collaborations[problemId]['participants'].push(socket.id);
+            collaborations[sessionId]['participants'].push(socket.id);
         } else {
             // there is no user working on the code, check redis first
-            redisClient.get(sessionPath + problemId, function(data) {
+            redisClient.get(sessionPath + sessionId, function(data) {
                 if (data) {
                     // there were users working on this code before
                     // pull the history data
                     console.log('session terminated previously, pulling back...');
-                    collaborations[problemId] = {
-                        'roomSerialNum': 0,
+                    collaborations[sessionId] = {
                         'cachedInstructions': JSON.parse(data),
                         'participants': []
                     }
                 } else {
                     console.log('you are the first one ever worked on this problem')
-                    collaborations[problemId] = {
-                        'roomSerialNum': 0,
+                    collaborations[sessionId] = {
                         'cachedInstructions': [],
                         'participants': []
                     }
+
                 }
                 
-                collaborations[problemId]['participants'].push(socket.id);
-                console.log(collaborations);
-                io.emit('getProblemsAndRooms', collaborations);
+                collaborations[sessionId]['participants'].push(socket.id);
             });
         }
-        console.log(collaborations);
-        io.emit('getProblemsAndRooms', collaborations);
 
         socket.on('change', delta => {
-            console.log('change' + socketIdToProblemId[socket.id] + ' ' + delta);
+            console.log('change' + socketIdToSessionId[socket.id] + ' ' + delta);
             // put change into collaboration cachedInstruction
-            const problemId = socketIdToProblemId[socket.id];
-            if (problemId in collaborations) {
-                collaborations[problemId]['cachedInstructions'].push(
+            const sessionId = socketIdToSessionId[socket.id];
+            if (sessionId in collaborations) {
+                collaborations[sessionId]['cachedInstructions'].push(
                     ['change', delta, Date.now()]
                 );
             }
@@ -69,7 +63,7 @@ module.exports = function(io) {
         });
 
         socket.on('cursorMove', (cursor) => {
-            console.log('change ' + socketIdToProblemId[socket.id] + ' ' + cursor);
+            console.log('change ' + socketIdToSessionId[socket.id] + ' ' + cursor);
             cursor = JSON.parse(cursor);
             // add socketId to the cursor object
 
@@ -80,9 +74,9 @@ module.exports = function(io) {
         });
 
         socket.on('restoreBuffer', () => {
-            const problemId = socketIdToProblemId[socket.id];
-            if (problemId in collaborations) {
-                const cachedInstructions = collaborations[problemId]['cachedInstructions'];
+            const sessionId = socketIdToSessionId[socket.id];
+            if (sessionId in collaborations) {
+                const cachedInstructions = collaborations[sessionId]['cachedInstructions'];
                 for (let ins of cachedInstructions) {
                     // send ('change', delta) to client
                     socket.emit(ins[0], ins[1]);
@@ -93,11 +87,11 @@ module.exports = function(io) {
         });
 
         socket.on('disconnect', () => {
-            const problemId = socketIdToProblemId[socket.id];
+            const sessionId = socketIdToSessionId[socket.id];
 
             let foundAndRemove = false;
-            if (problemId in collaborations) {
-                const participants = collaborations[problemId]['participants'];
+            if (sessionId in collaborations) {
+                const participants = collaborations[sessionId]['participants'];
                 const index = participants.indexOf(socket.id);
 
                 if (index >= 0) {
@@ -106,12 +100,12 @@ module.exports = function(io) {
                     foundAndRemove = true;
 
                     if (participants.length === 0) {
-                        const key = sessionPath + problemId;
-                        const value = JSON.stringify(collaborations[problemId]['cachedInstructions']);
+                        const key = sessionPath + sessionId;
+                        const value = JSON.stringify(collaborations[sessionId]['cachedInstructions']);
 
                         redisClient.set(key, value, redisClient.redisPrint);
                         redisClient.expire(key, TIMEOUT_IN_SECONDS);
-                        delete collaborations[problemId];
+                        delete collaborations[sessionId];
                     }
                 } else {
                     console.log('Error: user doesn\'t exist!');
@@ -121,15 +115,13 @@ module.exports = function(io) {
                     console.log('Error: user not found!');
                 }
             }
-            console.log(collaborations);
-            io.emit('getProblemsAndRooms', collaborations);
         });
     });
 
     const forwardEvent = function(socketId, eventName, dataString) {
-        const problemId = socketIdToProblemId[socketId];
-        if (problemId in collaborations) {
-            const participants = collaborations[problemId]['participants'];
+        const sessionId = socketIdToSessionId[socketId];
+        if (sessionId in collaborations) {
+            const participants = collaborations[sessionId]['participants'];
             for (let item of participants) {
                 if (socketId != item) {
                     io.to(item).emit(eventName, dataString);

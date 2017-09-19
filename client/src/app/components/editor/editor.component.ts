@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-
 import { CollaborationService } from '../../services/collaboration.service';
 declare const ace: any;  
 // we declare ace here since the program will find the script reference during the run time
@@ -14,7 +13,7 @@ export class EditorComponent implements OnInit {
   editor: any;
   languages: string[] = ['Java', 'Python', 'C_cpp'];
   language: string = 'Java';
-  sessionId: string;
+  problemId: string;
   output: string = '';
   defaultContent = {
     'Java': `public class Example {
@@ -44,7 +43,7 @@ export class EditorComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
-      this.sessionId = params['id'];
+      this.problemId = params['id'];
     });
     this.initEditor();
   }
@@ -56,7 +55,7 @@ export class EditorComponent implements OnInit {
 
     document.getElementsByTagName('textarea')[0].focus();  // cursor position
 
-    this.collaboration.init(this.editor, this.sessionId);
+    this.collaboration.initEditor(this.editor, this.problemId);
 
     // content change 
     this.editor.lastAppliedChange = null;
@@ -68,9 +67,10 @@ export class EditorComponent implements OnInit {
     });
 
     // cursor change 
+    // Ace keeps all the editor states (selection, scroll position, etc.) in editor.session
     this.editor.getSession().getSelection().on('changeCursor', () => {
       const cursor = this.editor.getSession().getSelection().getCursor();
-      console.log('Cursor move', JSON.stringify(cursor));
+      // console.log('Cursor move', JSON.stringify(cursor));
       this.collaboration.cursorMove(JSON.stringify(cursor));
     });
 
