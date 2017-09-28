@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/toPromise';
 
 import { Problem } from '../data-structure/problem';
-import { PROBLEMS } from '../mock-problems';
 
 @Injectable()
 export class DataService {

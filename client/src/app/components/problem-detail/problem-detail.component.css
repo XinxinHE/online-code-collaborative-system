@@ -1,0 +1,11 @@
+.align {
+  display: grid;
+  height: 70px;
+}
+
+.align > * {
+  margin-left: 10px;
+  display: grid;
+  align-items: center;
+  color: #00CC99;
+}

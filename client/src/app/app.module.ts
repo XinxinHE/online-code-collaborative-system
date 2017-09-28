@@ -14,6 +14,8 @@ import { ProblemDetailComponent } from './components/problem-detail/problem-deta
 import { NewProblemComponent } from './components/new-problem/new-problem.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { RoomBoardComponent } from './components/room-board/room-board.component';
+import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { EditorComponent } from './components/editor/editor.component';
     ProblemDetailComponent,
     NewProblemComponent,
     NavbarComponent,
-    EditorComponent
+    EditorComponent,
+    RoomBoardComponent,
+    ChatBoxComponent
   ],
   imports: [
     BrowserModule,

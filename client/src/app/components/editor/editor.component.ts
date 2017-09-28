@@ -14,6 +14,8 @@ export class EditorComponent implements OnInit {
   languages: string[] = ['Java', 'Python', 'C_cpp'];
   language: string = 'Java';
   problemId: string;
+  roomId: number;
+  name: string;
   output: string = '';
   defaultContent = {
     'Java': `public class Example {
@@ -44,6 +46,10 @@ export class EditorComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       this.problemId = params['id'];
+      this.roomId = params['roomId'];
+      this.name = params['name'];
+      console.log(params);
+      console.log("roomId: " + this.roomId);
     });
     this.initEditor();
   }
@@ -55,7 +61,7 @@ export class EditorComponent implements OnInit {
 
     document.getElementsByTagName('textarea')[0].focus();  // cursor position
 
-    this.collaboration.initEditor(this.editor, this.problemId);
+    this.collaboration.initEditor(this.editor, this.problemId, this.roomId, this.name);
 
     // content change 
     this.editor.lastAppliedChange = null;
@@ -70,7 +76,7 @@ export class EditorComponent implements OnInit {
     // Ace keeps all the editor states (selection, scroll position, etc.) in editor.session
     this.editor.getSession().getSelection().on('changeCursor', () => {
       const cursor = this.editor.getSession().getSelection().getCursor();
-      // console.log('Cursor move', JSON.stringify(cursor));
+      console.log('Cursor move', JSON.stringify(cursor));
       this.collaboration.cursorMove(JSON.stringify(cursor));
     });
 

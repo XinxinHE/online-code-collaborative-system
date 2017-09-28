@@ -1,15 +1,65 @@
 <div class="container">
+ <div class="row">
+    <div class="col align">
+      <span>Teamcode > Problem list</span>
+    </div>
+    <div class="col">
+      <form class="form-inline my-2 float-right">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search">
+          <button class="btn btn-outline-secondary my-2" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+
   <app-new-problem></app-new-problem>
+  
   <div class="list-group">    
-    <a class="list-group-item" *ngFor="let problem of problems"
-      [routerLink]="['/problems', problem.id]">
-      <span class="{{'pull-left label difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}">
-        {{problem.difficulty}}
+    <span href="#" class="list-group-item" *ngFor="let problem of problems">
+      <span class="col-4">
+        <span class="{{'pull-left badge badge-pill difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}">
+            {{problem.difficulty}}
+        </span>
+        <strong class="title">{{problem.id}}. {{problem.name}} </strong>
       </span>
-      <strong class="title">{{problem.id}}. {{problem.name}} </strong>
-      <span *ngIf="problemsAndRooms && problemsAndRooms[problem.id]">
-        Participant count: {{problemsAndRooms[problem.id].participants.length}}
+
+      <span class="col-8" *ngIf="problemsAndRooms">
+        <span *ngIf="problemsAndRooms[problem.id]">
+            <span *ngFor="let room of problemsAndRooms[problem.id]">
+                <span class="room" 
+                      (click)="specificRoom(problem.id, room.roomId)" 
+                      *ngIf="room['participants']">
+                      {{room['participants'].length}}
+                </span>
+            </span>
+        </span>
+        <span class="float-right">
+            <input href="#" class="btn btn-newroom" type="button" value="New" 
+                   (click)="newRoom(problem.id)"/>
+            <input href="#" class="btn btn-newroom" type="button" value="Random" />
+        </span>
       </span>
-    </a>
+    </span>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Entering into the room...</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Please enter your Nick Name: 
+        <input [(ngModel)]="name" type="text"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="submitBtn" (click)="enterRoom()" class="btn btn-primary">Enter</button>
+      </div>
+    </div>
   </div>
 </div>

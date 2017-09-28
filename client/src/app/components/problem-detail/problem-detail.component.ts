@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Problem } from 'app/data-structure/problem';
+import { CollaborationService } from '../../services/collaboration.service';
 
 @Component({
   selector: 'app-problem-detail',
@@ -9,17 +10,27 @@ import { Problem } from 'app/data-structure/problem';
 })
 export class ProblemDetailComponent implements OnInit {
   Problem: Problem;
+  problemId: string;
+  roomId: number;
+  name: string;
   constructor(
+    private collaboration: CollaborationService,
     private route: ActivatedRoute,
-    @Inject('data') private data
+    @Inject('data') private data,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
       // + String convert to number
-      //this.Problem = this.data.getProblem(+params['id']);
+      this.problemId = params['id'];
+      this.roomId = +params['roomId'];
+      this.name = params['name'];
+
       this.data.getProblem(+params['id'])
         .then(problem => this.Problem = problem);
     });
+
+    this.collaboration.initCollaborationSocket(this.problemId, this.roomId, this.name);
   }
 }

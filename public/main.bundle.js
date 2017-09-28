@@ -86,6 +86,8 @@ AppComponent = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_new_problem_new_problem_component__ = __webpack_require__("../../../../../src/app/components/new-problem/new-problem.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_navbar_navbar_component__ = __webpack_require__("../../../../../src/app/components/navbar/navbar.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_editor_editor_component__ = __webpack_require__("../../../../../src/app/components/editor/editor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__components_room_board_room_board_component__ = __webpack_require__("../../../../../src/app/components/room-board/room-board.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__components_chat_box_chat_box_component__ = __webpack_require__("../../../../../src/app/components/chat-box/chat-box.component.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -93,6 +95,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -119,7 +123,9 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_9__components_problem_detail_problem_detail_component__["a" /* ProblemDetailComponent */],
             __WEBPACK_IMPORTED_MODULE_10__components_new_problem_new_problem_component__["a" /* NewProblemComponent */],
             __WEBPACK_IMPORTED_MODULE_11__components_navbar_navbar_component__["a" /* NavbarComponent */],
-            __WEBPACK_IMPORTED_MODULE_12__components_editor_editor_component__["a" /* EditorComponent */]
+            __WEBPACK_IMPORTED_MODULE_12__components_editor_editor_component__["a" /* EditorComponent */],
+            __WEBPACK_IMPORTED_MODULE_13__components_room_board_room_board_component__["a" /* RoomBoardComponent */],
+            __WEBPACK_IMPORTED_MODULE_14__components_chat_box_chat_box_component__["a" /* ChatBoxComponent */]
         ],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
@@ -177,6 +183,67 @@ var routing = __WEBPACK_IMPORTED_MODULE_0__angular_router__["a" /* RouterModule 
 
 /***/ }),
 
+/***/ "../../../../../src/app/components/chat-box/chat-box.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".chatbox {\n    bottom: 0;\n    width: 100%;\n    border: 1px solid #CECECE;\n}\n\n.historyMsg {\n    height: 500px;\n    width: 100%;\n}", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/chat-box/chat-box.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div>\n  <div class=\"chatbox\">\n      <div class=\"historyMsg\" id=\"historyMsg\"></div>\n      <input type=\"textarea\">\n      <input type=\"button\" value=\"Send\">\n  </div>\n</div>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/chat-box/chat-box.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChatBoxComponent; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var ChatBoxComponent = (function () {
+    function ChatBoxComponent() {
+    }
+    ChatBoxComponent.prototype.ngOnInit = function () {
+    };
+    return ChatBoxComponent;
+}());
+ChatBoxComponent = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* Component */])({
+        selector: 'app-chat-box',
+        template: __webpack_require__("../../../../../src/app/components/chat-box/chat-box.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/components/chat-box/chat-box.component.css")]
+    }),
+    __metadata("design:paramtypes", [])
+], ChatBoxComponent);
+
+//# sourceMappingURL=chat-box.component.js.map
+
+/***/ }),
+
 /***/ "../../../../../src/app/components/editor/editor.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -198,7 +265,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/editor/editor.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<section>\n  <header>\n    <select class=\"form-control pull-left lang-select\" id=\"language\" name=\"language\"\n      [(ngModel)]=\"language\"\n      (change)=\"setLanguage(language)\"\n      >\n      <option *ngFor=\"let language of languages\"\n        [value]=\"language\">\n        {{language}}  \n      </option>\n    </select>\n    <!-- Button trigger modal -->\n    <button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">\n      <span class=\"glyphicon glyphicon-refresh\" aria-hidden=\"true\"></span>\n    </button>\n\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n      <div class=\"modal-dialog\" role=\"document\">\n        <div class=\"modal-content\">\n          <div class=\"modal-header\">\n            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n            <h4 class=\"modal-title\" id=\"myModalLabel\">Reset</h4>\n          </div>\n          <div class=\"modal-body\">\n            Are you sure?\n          </div>\n          <div class=\"modal-footer\">\n            <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n            <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" (click)=\"resetEditor()\">Reset</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </header> \n  <br/>\n  <div class=\"row\">\n    <div id=\"editor\">\n    </div>\n    <div>\n      {{output}}\n    </div>\n  </div>\n  <footer>\n    <button type=\"button\" class=\"btn btn-success pull-right\" (click)=\"submit()\">\n      Submit Solution  \n    </button>\n  </footer>\n</section>"
+module.exports = "<section>\n  <header>\n    <select class=\"form-control float-left lang-select\" id=\"language\" name=\"language\"\n      [(ngModel)]=\"language\"\n      (change)=\"setLanguage(language)\"\n      >\n      <option *ngFor=\"let language of languages\"\n        [value]=\"language\">\n        {{language}}  \n      </option>\n    </select>\n    <!-- Button trigger modal -->\n    <button type=\"button\" class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">\n      <span aria-hidden=\"true\">Reset</span>\n    </button>\n\n    <!-- Modal -->\n    <div class=\"modal fade\" id=\"myModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\">\n      <div class=\"modal-dialog\" role=\"document\">\n        <div class=\"modal-content\">\n          <div class=\"modal-header\">\n            <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n            <h4 class=\"modal-title\" id=\"myModalLabel\">Reset</h4>\n          </div>\n          <div class=\"modal-body\">\n            Are you sure?\n          </div>\n          <div class=\"modal-footer\">\n            <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Cancel</button>\n            <button type=\"button\" class=\"btn btn-primary\" data-dismiss=\"modal\" (click)=\"resetEditor()\">Reset</button>\n          </div>\n        </div>\n      </div>\n    </div>\n  </header> \n  <br/>\n  <div>\n    <div id=\"editor\">\n    </div>\n    <div>\n      {{output}}\n    </div>\n  </div>\n  <footer>\n    <button type=\"button\" class=\"btn btn-success float-right\" (click)=\"submit()\">\n      Submit Solution  \n    </button>\n  </footer>\n</section>"
 
 /***/ }),
 
@@ -244,6 +311,10 @@ var EditorComponent = (function () {
         var _this = this;
         this.route.params.subscribe(function (params) {
             _this.problemId = params['id'];
+            _this.roomId = params['roomId'];
+            _this.name = params['name'];
+            console.log(params);
+            console.log("roomId: " + _this.roomId);
         });
         this.initEditor();
     };
@@ -253,7 +324,7 @@ var EditorComponent = (function () {
         this.editor.setTheme("ace/theme/eclipse");
         this.resetEditor();
         document.getElementsByTagName('textarea')[0].focus(); // cursor position
-        this.collaboration.initEditor(this.editor, this.problemId);
+        this.collaboration.initEditor(this.editor, this.problemId, this.roomId, this.name);
         // content change 
         this.editor.lastAppliedChange = null;
         this.editor.on('change', function (e) {
@@ -266,7 +337,7 @@ var EditorComponent = (function () {
         // Ace keeps all the editor states (selection, scroll position, etc.) in editor.session
         this.editor.getSession().getSelection().on('changeCursor', function () {
             var cursor = _this.editor.getSession().getSelection().getCursor();
-            // console.log('Cursor move', JSON.stringify(cursor));
+            console.log('Cursor move', JSON.stringify(cursor));
             _this.collaboration.cursorMove(JSON.stringify(cursor));
         });
         // call restore buffer
@@ -318,7 +389,7 @@ exports = module.exports = __webpack_require__("../../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".bg-blue {\n    background-color:rgba(0, 204, 204, 1);\n}", ""]);
 
 // exports
 
@@ -331,7 +402,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/navbar/navbar.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n<nav class=\"navbar navbar-default\">\n  <div class=\"container-fluid\">\n    <!-- Brand and toggle get grouped for better mobile display -->\n    <div class=\"navbar-header\">\n      <button type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle navigation</span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n        <span class=\"icon-bar\"></span>\n      </button>\n      <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n    </div>\n\n    <!-- Collect the nav links, forms, and other content for toggling -->\n    <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n      <ul class=\"nav navbar-nav\">\n        <li class=\"active\"><a href=\"#\">Link <span class=\"sr-only\">(current)</span></a></li>\n        <li><a href=\"#\">Link</a></li>\n        <li class=\"dropdown\">\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">Dropdown <span class=\"caret\"></span></a>\n          <ul class=\"dropdown-menu\">\n            <li><a href=\"#\">Action</a></li>\n            <li><a href=\"#\">Another action</a></li>\n            <li><a href=\"#\">Something else here</a></li>\n            <li role=\"separator\" class=\"divider\"></li>\n            <li><a href=\"#\">Separated link</a></li>\n            <li role=\"separator\" class=\"divider\"></li>\n            <li><a href=\"#\">One more separated link</a></li>\n          </ul>\n        </li>\n      </ul>\n      <form class=\"navbar-form navbar-left\">\n        <div class=\"form-group\">\n          <input type=\"text\" class=\"form-control\" placeholder=\"Search\">\n        </div>\n        <button type=\"submit\" class=\"btn btn-default\">Submit</button>\n      </form>\n      <ul class=\"nav navbar-nav navbar-right\">\n        <li><a href=\"#\">Link</a></li>\n        <li class=\"dropdown\">\n          <a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-haspopup=\"true\" aria-expanded=\"false\">Dropdown <span class=\"caret\"></span></a>\n          <ul class=\"dropdown-menu\">\n            <li><a href=\"#\">Action</a></li>\n            <li><a href=\"#\">Another action</a></li>\n            <li><a href=\"#\">Something else here</a></li>\n            <li role=\"separator\" class=\"divider\"></li>\n            <li><a href=\"#\">Separated link</a></li>\n          </ul>\n        </li>\n      </ul>\n    </div><!-- /.navbar-collapse -->\n  </div><!-- /.container-fluid -->\n</nav>\n</div>"
+module.exports = "<div class=\"container\">\n  <nav class=\"navbar navbar-toggleable-md navbar-inverse bg-blue\">\n    <button class=\"navbar-toggler navbar-toggler-right\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNav\" aria-controls=\"navbarNav\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n        <span class=\"navbar-toggler-icon\"></span>\n    </button>\n    <a class=\"navbar-brand\" href=\"#\">{{title}}</a>\n    <div class=\"collapse navbar-collapse\" id=\"navbarNav\">\n      <ul class=\"navbar-nav ml-auto\">\n        <li class=\"nav-item\"><a class=\"nav-link\" href=\"#\">Sign in</a></li>\n        <li class=\"nav-item\"><a class=\"nav-link\" href=\"#\">Sign up</a></li>\n      </ul>\n    </div>\n  </nav>\n \n</div>"
 
 /***/ }),
 
@@ -353,7 +424,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 var NavbarComponent = (function () {
     function NavbarComponent() {
-        this.title = "COJ - Xinxin";
+        this.title = "Teamcode";
     }
     NavbarComponent.prototype.ngOnInit = function () {
     };
@@ -460,7 +531,7 @@ exports = module.exports = __webpack_require__("../../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".align {\n  display: -ms-grid;\n  display: grid;\n  height: 70px;\n}\n\n.align > * {\n  margin-left: 10px;\n  display: -ms-grid;\n  display: grid;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #00CC99;\n}", ""]);
 
 // exports
 
@@ -473,7 +544,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/problem-detail/problem-detail.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\" *ngIf=\"Problem\">\n  <div class=\"col-xs-12 col-md-4\">\n    <h2>\n      {{Problem.id}}. {{Problem.name}}\n    </h2>\n    <p>\n      {{Problem.desc}}\n    </p>\n  </div>\n\n  <div class=\"hidden-xs col-sm-12 col-md-8\">\n    <app-editor></app-editor>  \n  </div>\n\n</div>"
+module.exports = "<div class=\"container\" *ngIf=\"Problem\">\n    <div class=\"row\">\n        <div class=\"col-12 align\">\n          <span>Teamcode > Problem list</span>\n        </div>\n    </div>\n    <div class=\"row\">\n      <div class=\"col-xs-12 col-md-8\">\n          <div>\n              <h2>\n                {{Problem.id}}. {{Problem.name}}\n              </h2>\n              <p>\n                {{Problem.desc}}\n              </p>\n              <hr />\n          </div>\n          \n          <div>\n            <app-editor></app-editor>  \n          </div>\n        </div>\n        <div class=\"col-xs-12 col-md-4\">\n            <app-room-board></app-room-board>\n        </div>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -483,6 +554,7 @@ module.exports = "<div class=\"container\" *ngIf=\"Problem\">\n  <div class=\"co
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__ = __webpack_require__("../../../../../src/app/services/collaboration.service.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProblemDetailComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -498,19 +570,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 
 
+
 var ProblemDetailComponent = (function () {
-    function ProblemDetailComponent(route, data) {
+    function ProblemDetailComponent(collaboration, route, data, router) {
+        this.collaboration = collaboration;
         this.route = route;
         this.data = data;
+        this.router = router;
     }
     ProblemDetailComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.route.params.subscribe(function (params) {
             // + String convert to number
-            //this.Problem = this.data.getProblem(+params['id']);
+            _this.problemId = params['id'];
+            _this.roomId = +params['roomId'];
+            _this.name = params['name'];
             _this.data.getProblem(+params['id'])
                 .then(function (problem) { return _this.Problem = problem; });
         });
+        this.collaboration.initCollaborationSocket(this.problemId, this.roomId, this.name);
     };
     return ProblemDetailComponent;
 }());
@@ -520,11 +598,11 @@ ProblemDetailComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/components/problem-detail/problem-detail.component.html"),
         styles: [__webpack_require__("../../../../../src/app/components/problem-detail/problem-detail.component.css")]
     }),
-    __param(1, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["f" /* Inject */])('data')),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _a || Object, Object])
+    __param(2, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["f" /* Inject */])('data')),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__["a" /* CollaborationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__["a" /* CollaborationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _b || Object, Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _c || Object])
 ], ProblemDetailComponent);
 
-var _a;
+var _a, _b, _c;
 //# sourceMappingURL=problem-detail.component.js.map
 
 /***/ }),
@@ -537,7 +615,7 @@ exports = module.exports = __webpack_require__("../../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, ".difficulty {\n  min-width: 65px;\n  margin-right: 10px;\n}\n\n.label.difficulty {\n  padding-top: 0.6em;\n  color: #fbfdfa;\n  font-size: 12px;\n}\n\n.title {\n  font-size: 1.2em;\n}\n\n.diff-easy {\n  background-color: #42ebf4;\n}\n\n.diff-medium {\n  background-color: #92cf5c;\n}\n\n.diff-hard {\n  background-color: #dd0d1e;\n}\n\n.diff-super {\n  background-color: #8d16e2;\n}\n", ""]);
+exports.push([module.i, ".align {\n  display: -ms-grid;\n  display: grid;\n}\n\n.align > * {\n  margin-left: 10px;\n  display: -ms-grid;\n  display: grid;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  color: #00CC99;\n}\n\n.difficulty {\n  min-width: 65px;\n  margin-right: 10px;\n  padding-top: 0.4em;\n  padding-bottom: 0.4em;\n  color: #fbfdfa;\n  font-size: 14px;\n}\n\n.title {\n  font-size: 1.2em;\n}\n\n.diff-easy {\n  background-color: #42ebf4;\n}\n\n.diff-medium {\n  background-color: #92cf5c;\n}\n\n.diff-hard {\n  background-color: #dd0d1e;\n}\n\n.diff-super {\n  background-color: #8d16e2;\n}\n\n.room-full {\n  background-color: #C7C7C7;\n  color: black;\n}\n\n.room {\n  background-color: #ff7c3c;\n  color: white;\n  font-weight: bolder;\n  width: 30px;\n  height: 30px;\n  padding-top: 2px;\n  margin-left: 5px;\n  text-align: center;\n  display: inline-block;\n}\n\n.btn-newroom {\n  display: inline-block;\n  padding: .3rem .5rem;\n  font-size: .9rem;\n}", ""]);
 
 // exports
 
@@ -550,7 +628,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/problem-list/problem-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <app-new-problem></app-new-problem>\n  <div class=\"list-group\">    \n    <a class=\"list-group-item\" *ngFor=\"let problem of problems\"\n      [routerLink]=\"['/problems', problem.id]\">\n      <span class=\"{{'pull-left label difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}\">\n        {{problem.difficulty}}\n      </span>\n      <strong class=\"title\">{{problem.id}}. {{problem.name}} </strong>\n      <span *ngIf=\"problemsAndRooms && problemsAndRooms[problem.id]\">\n        Participant count: {{problemsAndRooms[problem.id].participants.length}}\n      </span>\n    </a>\n  </div>\n</div>\n"
+module.exports = "<div class=\"container\">\n <div class=\"row\">\n    <div class=\"col align\">\n      <span>Teamcode > Problem list</span>\n    </div>\n    <div class=\"col\">\n      <form class=\"form-inline my-2 float-right\">\n          <input class=\"form-control mr-sm-2\" type=\"text\" placeholder=\"Search\">\n          <button class=\"btn btn-outline-secondary my-2\" type=\"submit\">Search</button>\n      </form>\n    </div>\n  </div>\n\n  <app-new-problem></app-new-problem>\n  \n  <div class=\"list-group\">    \n    <span href=\"#\" class=\"list-group-item\" *ngFor=\"let problem of problems\">\n      <span class=\"col-4\">\n        <span class=\"{{'pull-left badge badge-pill difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}\">\n            {{problem.difficulty}}\n        </span>\n        <strong class=\"title\">{{problem.id}}. {{problem.name}} </strong>\n      </span>\n\n      <span class=\"col-8\" *ngIf=\"problemsAndRooms\">\n        <span *ngIf=\"problemsAndRooms[problem.id]\">\n            <span *ngFor=\"let room of problemsAndRooms[problem.id]\">\n                <span class=\"room\" \n                      (click)=\"specificRoom(problem.id, room.roomId)\" \n                      *ngIf=\"room['participants']\">\n                      {{room['participants'].length}}\n                </span>\n            </span>\n        </span>\n        <span class=\"float-right\">\n            <input href=\"#\" class=\"btn btn-newroom\" type=\"button\" value=\"New\" \n                   (click)=\"newRoom(problem.id)\"/>\n            <input href=\"#\" class=\"btn btn-newroom\" type=\"button\" value=\"Random\" />\n        </span>\n      </span>\n    </span>\n  </div>\n</div>\n\n<!-- Modal -->\n<div class=\"modal fade\" id=\"myModal\" role=\"dialog\" data-backdrop=\"static\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">Entering into the room...</h5>\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n          <span aria-hidden=\"true\">&times;</span>\n        </button>\n      </div>\n      <div class=\"modal-body\">\n        Please enter your Nick Name: \n        <input [(ngModel)]=\"name\" type=\"text\"/>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" id=\"submitBtn\" (click)=\"enterRoom()\" class=\"btn btn-primary\">Enter</button>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -559,7 +637,8 @@ module.exports = "<div class=\"container\">\n  <app-new-problem></app-new-proble
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_collaboration_service__ = __webpack_require__("../../../../../src/app/services/collaboration.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__ = __webpack_require__("../../../../../src/app/services/collaboration.service.ts");
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProblemListComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -575,14 +654,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 
 
+
 var ProblemListComponent = (function () {
-    function ProblemListComponent(collaboration, dataService) {
+    function ProblemListComponent(collaboration, dataService, router, elementRef) {
         this.collaboration = collaboration;
         this.dataService = dataService;
+        this.router = router;
+        this.elementRef = elementRef;
         this.problems = [];
+        this.name = '';
     }
     ProblemListComponent.prototype.ngOnInit = function () {
         this.getProblems();
+        this.collaboration.initSocket();
         this.getProblemsAndRooms();
     };
     ProblemListComponent.prototype.getProblems = function () {
@@ -591,15 +675,44 @@ var ProblemListComponent = (function () {
         this.dataService.getProblems()
             .subscribe(function (problems) {
             _this.problems = problems;
+            //console.log("----------------------");
+            //console.dir(this.problems); 
         });
     };
     ProblemListComponent.prototype.getProblemsAndRooms = function () {
         var _this = this;
-        this.collaboration.init()
+        this.collaboration.getProblemsAndRooms()
             .subscribe(function (value) {
             _this.problemsAndRooms = value;
             console.dir(_this.problemsAndRooms);
         });
+    };
+    ProblemListComponent.prototype.newRoom = function (problemId) {
+        $(function () {
+            $('#myModal').modal();
+        });
+        this.problemId = problemId;
+        if (!this.problemsAndRooms[problemId] || this.problemsAndRooms[problemId].length === 0) {
+            this.roomId = 0;
+        }
+        else {
+            var roomLength = this.problemsAndRooms[problemId].length;
+            this.roomId = parseInt(this.problemsAndRooms[problemId][roomLength - 1]['roomId']) + 1;
+        }
+    };
+    ProblemListComponent.prototype.specificRoom = function (problemId, roomId) {
+        $(function () {
+            $('#myModal').modal();
+        });
+        this.problemId = problemId;
+        this.roomId = roomId;
+    };
+    ProblemListComponent.prototype.enterRoom = function () {
+        $(function () {
+            $('#myModal').modal('toggle');
+        });
+        window.open(window.location.origin +
+            ("/problems/" + this.problemId + ";roomId=" + this.roomId + ";name=" + this.name));
     };
     return ProblemListComponent;
 }());
@@ -610,11 +723,86 @@ ProblemListComponent = __decorate([
         styles: [__webpack_require__("../../../../../src/app/components/problem-list/problem-list.component.css")]
     }),
     __param(1, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["f" /* Inject */])('data')),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_collaboration_service__["a" /* CollaborationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_collaboration_service__["a" /* CollaborationService */]) === "function" && _a || Object, Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__["a" /* CollaborationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__["a" /* CollaborationService */]) === "function" && _a || Object, Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["M" /* ElementRef */]) === "function" && _c || Object])
 ], ProblemListComponent);
 
-var _a;
+var _a, _b, _c;
 //# sourceMappingURL=problem-list.component.js.map
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/room-board/room-board.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".timer {\n    width: 200px;\n    height: 50px;\n    text-align: center;\n    padding: .8em;\n    margin: 30px auto;\n    background-color: #e6e6e6;\n}", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/room-board/room-board.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"card\">\n    <div class=\"card-block\">\n      <h4 class=\"card-title\">Room URL</h4>\n      <p class=\"card-text\">{{URL}}</p>\n      <div class=\"timer\">43 : 20</div>\n      <div>User List</div>\n      <app-chat-box></app-chat-box>\n    </div>\n  </div>"
+
+/***/ }),
+
+/***/ "../../../../../src/app/components/room-board/room-board.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/@angular/router.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__ = __webpack_require__("../../../../../src/app/services/collaboration.service.ts");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RoomBoardComponent; });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var RoomBoardComponent = (function () {
+    function RoomBoardComponent(collaboration, route) {
+        this.collaboration = collaboration;
+        this.route = route;
+    }
+    RoomBoardComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.route.params.subscribe(function (params) {
+            _this.problemId = params['id'];
+            _this.roomId = params['roomId'];
+            _this.name = params['name'];
+            _this.URL = window.location.origin + ("/problems/" + _this.problemId);
+        });
+    };
+    return RoomBoardComponent;
+}());
+RoomBoardComponent = __decorate([
+    __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_13" /* Component */])({
+        selector: 'app-room-board',
+        template: __webpack_require__("../../../../../src/app/components/room-board/room-board.component.html"),
+        styles: [__webpack_require__("../../../../../src/app/components/room-board/room-board.component.css")]
+    }),
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__["a" /* CollaborationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__services_collaboration_service__["a" /* CollaborationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* ActivatedRoute */]) === "function" && _b || Object])
+], RoomBoardComponent);
+
+var _a, _b;
+//# sourceMappingURL=room-board.component.js.map
 
 /***/ }),
 
@@ -646,26 +834,32 @@ var CollaborationService = (function () {
         // behaviour subject: must initialize with a value
         this._problemsAndRooms = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__["Subject"]();
     }
-    CollaborationService.prototype.init = function () {
-        var _this = this;
+    CollaborationService.prototype.initSocket = function () {
         // namespace: /
         this.problemListSocket = io(window.location.origin);
+    };
+    CollaborationService.prototype.getProblemsAndRooms = function () {
+        var _this = this;
         // problemsAndRooms: use arrow function to bind to this, otherwise not refer to Injectable
         this.problemListSocket.on('getProblemsAndRooms', function (problemsAndRooms) {
-            console.log('Rooms:  -----');
-            console.log(problemsAndRooms);
+            // console.log('Rooms:  -----');
+            // console.log(problemsAndRooms);
             _this._problemsAndRooms.next(problemsAndRooms);
         });
         return this._problemsAndRooms.asObservable();
     };
-    CollaborationService.prototype.initEditor = function (editor, problemId) {
+    CollaborationService.prototype.initCollaborationSocket = function (problemId, roomId, name) {
         /* location.orign: returns the protocol, hostname, and port number of a URL
          * query: the query member is passed to the server on connection and parsed as a CGI style query string
          * Retrieved by socket.handshake.query at the server side
          */
-        var _this = this;
         // namespace: problemEditor 
-        this.collaborationSocket = io(window.location.origin + '/problemEditor', { query: 'problemId=' + problemId });
+        this.collaborationSocket = io(window.location.origin + '/problemEditor', { query: 'problemId=' + problemId + '&roomId=' + roomId });
+    };
+    CollaborationService.prototype.getRoomParticipants = function (problemId, roomId) {
+    };
+    CollaborationService.prototype.initEditor = function (editor, problemId, roomId, name) {
+        var _this = this;
         this.collaborationSocket.on('change', function (delta) {
             console.log('Collaboration: editor changed by ' + delta);
             delta = JSON.parse(delta);
@@ -680,6 +874,7 @@ var CollaborationService = (function () {
             var x = cursor['row'];
             var y = cursor['column'];
             var changeClientId = cursor['socketId'];
+            var markerId = changeClientId.replace(/[^a-zA-Z ]/g, "");
             if (changeClientId in _this.clientsInfo) {
                 session.removeMarker(_this.clientsInfo[changeClientId]['marker']);
             }
@@ -688,16 +883,18 @@ var CollaborationService = (function () {
                 _this.clientsInfo[changeClientId] = {};
                 var css = document.createElement('style');
                 css.type = 'text/css';
-                css.innerHTML = '.editor_cursor_' + changeClientId
-                    + '{ position: absolute; background: ' + __WEBPACK_IMPORTED_MODULE_2__assets_colors__["a" /* COLORS */][_this.clientNum] + ';'
-                    + 'z-index: 100; width: 3px !important;}';
+                css.innerHTML = '.editor_cursor_' + markerId +
+                    '{ position: absolute; background: ' + __WEBPACK_IMPORTED_MODULE_2__assets_colors__["a" /* COLORS */][_this.clientNum] + ';' +
+                    'z-index: 100; width: 3px !important;}';
                 document.body.appendChild(css);
                 _this.clientNum++;
             }
             // draw a new marker
             var Range = ace.require('ace/range').Range;
-            var newMarker = session.addMarker(new Range(x, y, x, y + 1), 'editor_cursor_' + changeClientId, true);
+            var newMarker = session.addMarker(new Range(x, y, x, y + 5), 'editor_cursor_' + markerId, null, true);
             _this.clientsInfo[changeClientId]['marker'] = newMarker;
+            console.log("@@@@@@@@@@@@@@@@@@@@@@@@@");
+            console.log(newMarker);
         });
     };
     CollaborationService.prototype.change = function (delta) {

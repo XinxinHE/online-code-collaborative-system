@@ -1,0 +1,10 @@
+.chatbox {
+    bottom: 0;
+    width: 100%;
+    border: 1px solid #CECECE;
+}
+
+.historyMsg {
+    height: 500px;
+    width: 100%;
+}

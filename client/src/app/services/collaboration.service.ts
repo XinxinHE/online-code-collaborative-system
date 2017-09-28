@@ -16,27 +16,37 @@ export class CollaborationService {
   private _problemsAndRooms = new Subject<any>();
   constructor() { }
   
-  init():Observable<any> {
+  initSocket() {
     // namespace: /
     this.problemListSocket = io(window.location.origin);
+  }
 
+  getProblemsAndRooms():Observable<any> {
     // problemsAndRooms: use arrow function to bind to this, otherwise not refer to Injectable
     this.problemListSocket.on('getProblemsAndRooms', (problemsAndRooms) => { 
-        console.log('Rooms:  -----');
-        console.log(problemsAndRooms);
+        // console.log('Rooms:  -----');
+        // console.log(problemsAndRooms);
         this._problemsAndRooms.next(problemsAndRooms);
     });   
     return this._problemsAndRooms.asObservable();
   }
 
-  initEditor(editor: any, problemId: string): void {
+  initCollaborationSocket(problemId: string, roomId: number, name: string) {
     /* location.orign: returns the protocol, hostname, and port number of a URL
      * query: the query member is passed to the server on connection and parsed as a CGI style query string
      * Retrieved by socket.handshake.query at the server side
      */
 
     // namespace: problemEditor 
-    this.collaborationSocket = io(window.location.origin + '/problemEditor', {query: 'problemId=' + problemId});
+    this.collaborationSocket = io(window.location.origin + '/problemEditor',
+    {query: 'problemId=' + problemId + '&roomId=' + roomId + '&name=' + name});
+  }
+
+  getRoomParticipants(problemId: string, roomId: number) {
+    
+  }
+
+  initEditor(editor: any, problemId: string, roomId: number): void {
 
     this.collaborationSocket.on('change', (delta: string) => {
       console.log('Collaboration: editor changed by ' + delta);
@@ -53,7 +63,7 @@ export class CollaborationService {
       const x = cursor['row'];
       const y = cursor['column'];
       const changeClientId = cursor['socketId'];
-
+      const markerId = changeClientId.replace(/[^a-zA-Z ]/g, "");
       if (changeClientId in this.clientsInfo) {
         session.removeMarker(this.clientsInfo[changeClientId]['marker']);
       } else {
@@ -61,19 +71,23 @@ export class CollaborationService {
         this.clientsInfo[changeClientId] = {};
         const css = document.createElement('style');
         css.type = 'text/css';
-        css.innerHTML = '.editor_cursor_' + changeClientId
-          + '{ position: absolute; background: ' + COLORS[this.clientNum] + ';'
-          + 'z-index: 100; width: 3px !important;}';
+        css.innerHTML = '.editor_cursor_' + markerId +
+          '{ position: absolute; background: ' + COLORS[this.clientNum] + ';' +
+          'z-index: 100; width: 3px !important;}';
         document.body.appendChild(css);
         this.clientNum++;
       }
       // draw a new marker
       const Range = ace.require('ace/range').Range;
-      const newMarker = session.addMarker(new Range(x, y, x, y + 1), 
-                                          'editor_cursor_' + changeClientId,
+      const newMarker = session.addMarker(new Range(x, y, x, y + 5), 
+                                          'editor_cursor_' + markerId,
+                                          null,
                                           true);
       this.clientsInfo[changeClientId]['marker'] = newMarker;
-    })
+
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@");
+      console.log(newMarker);
+    });
   }
 
   change(delta: string): void {

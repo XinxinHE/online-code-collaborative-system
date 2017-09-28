@@ -1,12 +1,21 @@
+.align {
+  display: grid;
+}
+
+.align > * {
+  margin-left: 10px;
+  display: grid;
+  align-items: center;
+  color: #00CC99;
+}
+
 .difficulty {
   min-width: 65px;
   margin-right: 10px;
-}
-
-.label.difficulty {
-  padding-top: 0.6em;
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
   color: #fbfdfa;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .title {
@@ -27,4 +36,27 @@
 
 .diff-super {
   background-color: #8d16e2;
+}
+
+.room-full {
+  background-color: #C7C7C7;
+  color: black;
+}
+
+.room {
+  background-color: #ff7c3c;
+  color: white;
+  font-weight: bolder;
+  width: 30px;
+  height: 30px;
+  padding-top: 2px;
+  margin-left: 5px;
+  text-align: center;
+  display: inline-block;
+}
+
+.btn-newroom {
+  display: inline-block;
+  padding: .3rem .5rem;
+  font-size: .9rem;
 }
