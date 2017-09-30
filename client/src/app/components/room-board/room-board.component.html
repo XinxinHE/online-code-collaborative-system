@@ -2,7 +2,7 @@
     <div class="card-block">
       <h4 class="card-title">Room Link</h4>
       <p class="card-text">{{URL}}</p>
-      <div class="timer">43 : 20</div>
+      <div class="timer">{{time | secondsToTime}}</div>
       <div *ngIf="participantList">
         <h4 class="card-title">Room Members</h4>
         <div class="user" *ngFor="let id of participantIndex">

@@ -16,6 +16,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { RoomBoardComponent } from './components/room-board/room-board.component';
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
+import { secondsToTimePipe } from './pipes/secondsToTime.pipe';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ChatBoxComponent } from './components/chat-box/chat-box.component';
     NavbarComponent,
     EditorComponent,
     RoomBoardComponent,
-    ChatBoxComponent
+    ChatBoxComponent,
+    secondsToTimePipe
   ],
   imports: [
     BrowserModule,

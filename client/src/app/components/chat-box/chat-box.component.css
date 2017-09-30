@@ -1,10 +1,44 @@
 .chatbox {
-    bottom: 0;
-    width: 100%;
-    border: 1px solid #CECECE;
+    border-top: 1px solid #CECECE;
+    margin-top: 20px;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 20px;
+    padding-bottom: 0px;
 }
 
 .historyMsg {
-    height: 500px;
+    height: 400px;
     width: 100%;
+    overflow-x: auto;
+}
+
+.user {
+    margin: 5px 0;
+}
+.user-initial {
+    display: inline-block;
+    vertical-align: top;
+    width: 30px;
+    padding: 2px 0;
+    margin-right: 6px;
+    margin-top: 2px;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 3px;
+    text-align: center;
+}
+.user-message {
+    display: inline-block;
+    width: 250px;
+    background-color: #efefef;
+    padding: 5px 10px;
+    word-wrap: break-word;
+    border-radius: 5px;
+}
+.form-inline {
+    margin-top: 10px;
+}
+.form-inline .margin {
+    margin-right: 5px;
 }

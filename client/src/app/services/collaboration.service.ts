@@ -15,6 +15,8 @@ export class CollaborationService {
   // behaviour subject: must initialize with a value
   private _problemsAndRooms = new Subject<any>();
   private _participantList = new Subject<any>();
+  private _newMessage = new Subject<string>();
+  private _startTime = new Subject<any>();
 
   constructor() { }
   initSocket() {
@@ -43,7 +45,7 @@ export class CollaborationService {
 
   initParticipantList(): Observable<any> {
     this.collaborationSocket.on('getParticipants', (value) => {
-      console.log(value);
+      // console.log(value);
       this._participantList.next(value);
     });
     return this._participantList.asObservable();
@@ -52,7 +54,7 @@ export class CollaborationService {
   initEditor(editor: any, problemId: string, roomId: string): void {
 
     this.collaborationSocket.on('change', (delta: string) => {
-      console.log('Collaboration: editor changed by ' + delta);
+      // console.log('Collaboration: editor changed by ' + delta);
       delta = JSON.parse(delta);
       editor.lastAppliedChange = delta;
       // apply changes received from server to ace editor
@@ -66,6 +68,7 @@ export class CollaborationService {
       const x = cursor['row'];
       const y = cursor['column'];
       const changeClientId = cursor['socketId'];
+      const color = cursor['color'];
       const markerId = changeClientId.replace(/[^a-zA-Z ]/g, "");
       if (changeClientId in this.clientsInfo) {
         session.removeMarker(this.clientsInfo[changeClientId]['marker']);
@@ -75,20 +78,40 @@ export class CollaborationService {
         const css = document.createElement('style');
         css.type = 'text/css';
         css.innerHTML = '.editor_cursor_' + markerId +
-          '{ position: absolute; background: ' + COLORS[this.clientNum] + ';' +
+          '{ position: absolute; background: ' + color + ';' +
           'z-index: 100; width: 3px !important;}';
         document.body.appendChild(css);
-        this.clientNum++;
       }
       // draw a new marker
       const Range = ace.require('ace/range').Range;
-      const newMarker = session.addMarker(new Range(x, y, x, y + 5), 
+      const newMarker = session.addMarker(new Range(x, y, x, y + 2), 
                                           'editor_cursor_' + markerId,
                                           null,
                                           true);
       this.clientsInfo[changeClientId]['marker'] = newMarker;
     });
   }
+
+  initChatbox(): Observable<string>{
+    this.collaborationSocket.on('sendMessage', (message)=> {
+      this._newMessage.next(message);
+    });
+    return this._newMessage.asObservable();
+  }
+
+  initTime(): Observable<any> {
+    this.collaborationSocket.on('getTime', (date) => {
+      this._startTime.next(date);
+    });
+    return this._startTime.asObservable();
+  }
+
+  getTime(): void {
+    this.collaborationSocket.emit('getTime');
+  }
+  sendMessage(message: string): void {
+    this.collaborationSocket.emit('sendMessage', message)
+  } 
 
   change(delta: string): void {
     this.collaborationSocket.emit('change', delta);

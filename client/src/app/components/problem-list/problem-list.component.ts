@@ -80,6 +80,7 @@ export class ProblemListComponent implements OnInit {
     });
     window.open(window.location.origin + 
                 `/problems/${this.problemId};roomId=${this.roomId};name=${this.name}`);
+    this.name='';
   }
 
   getParticipantCount(problemId, roomId): number {

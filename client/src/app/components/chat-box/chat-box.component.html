@@ -1,7 +1,16 @@
 <div>
   <div class="chatbox">
-      <div class="historyMsg" id="historyMsg"></div>
-      <input type="textarea">
-      <input type="button" value="Send">
+      <div class="historyMsg" id="historyMsg">
+        <div class="user" *ngFor="let message of messageHistory">
+            <span class="user-initial" [ngStyle]="{'background-color': message.color}">
+              {{message.name[0]}}
+            </span>
+            <span class="user-message">{{message.message}}</span>
+        </div>
+      </div>
+      <div class="form-inline">
+        <input class="form-control margin" [(ngModel)]="message" placeholder="Input Message...">
+        <button class="btn btn-info" (click)="sendMessage()" type="button">Send</button>
+      </div>
   </div>
 </div>

@@ -8,9 +8,9 @@ module.exports = function(io) {
     const sessionPath = '/ojserver/'; // for redis
 
     io.on('connection', (socket) => {
-        console.log("**********************");
-        console.log(collaborations);
-        console.log(socketIdRoomInfo);
+        console.log("**********************");     
+        // console.log(collaborations);
+        // console.log(socketIdRoomInfo);
         socket.emit('getProblemsAndRooms', collaborations);
     });
 
@@ -20,6 +20,7 @@ module.exports = function(io) {
         const roomId = socket.handshake.query['roomId'];
         const name = socket.handshake.query['name'];
         const color = selectAvailableColor(problemId, roomId);
+        const startTime = Date.now();
 
         socketIdRoomInfo[socket.id] = { 'problemId': problemId,
                                         'roomId': roomId,
@@ -41,14 +42,18 @@ module.exports = function(io) {
                         collaborations[problemId][newRoomIndex] = {
                             'roomId': roomId,
                             'cachedInstructions': JSON.parse(data),
-                            'participants': []
+                            'participants': [],
+                            'messageHistory': [],
+                            'startDate': startTime
                         }
                     } else {
                         console.log('you are the first one ever worked on this problem')
                         collaborations[problemId][newRoomIndex] = {
                             'roomId': roomId,
                             'cachedInstructions': [],
-                            'participants': []
+                            'participants': [],
+                            'messageHistory': [],
+                            'startDate': startTime
                         }
                     }
                     collaborations[problemId][newRoomIndex]['participants'].push(socket.id);
@@ -67,7 +72,9 @@ module.exports = function(io) {
                     collaborations[problemId][0] = {
                         'roomId': roomId,
                         'cachedInstructions': JSON.parse(data),
-                        'participants': []
+                        'participants': [],
+                        'messageHistory': [],
+                        'startDate': startTime
                     }
                 } else {
                     console.log('you are the first one ever worked on this problem')
@@ -75,16 +82,16 @@ module.exports = function(io) {
                     collaborations[problemId][0] = {
                         'roomId': roomId,
                         'cachedInstructions': [],
-                        'participants': []
+                        'participants': [],
+                        'messageHistory': [],
+                        'startDate': startTime
                     }
                 }
                 
                 collaborations[problemId][0]['participants'].push(socket.id);
-                console.log(collaborations);                
                 io.emit('getProblemsAndRooms', collaborations);
             });
         }
-        console.log(collaborations);
         io.emit('getProblemsAndRooms', collaborations);
 
         socket.on('getParticipants', (roomInfo) => {
@@ -102,6 +109,18 @@ module.exports = function(io) {
                 }
             } 
             io.of('/problemEditor').emit('getParticipants', participantList); 
+        });
+
+        socket.on('getTime', ()=> {
+            const problemId = socketIdRoomInfo[socket.id]['problemId'];
+            const roomId = socketIdRoomInfo[socket.id]['roomId'];
+            if (problemId in collaborations) {
+                let roomIndex = checkRoomExistence(problemId, roomId, collaborations);                
+                if (roomIndex !== -1) {
+                    console.log('startDate: ', collaborations[problemId][roomId].startDate);
+                    socket.emit('getTime', collaborations[problemId][roomId].startDate); 
+                }
+            }
         });
 
         socket.on('change', delta => {
@@ -127,6 +146,7 @@ module.exports = function(io) {
             cursor = JSON.parse(cursor);
             // add socketId to the cursor object
             cursor['socketId'] = socket.id;
+            cursor['color'] = socketIdRoomInfo[socket.id].color;
             // forward the cursor move event to everyone else working on the same session
             forwardEvent(socket.id, 'cursorMove', JSON.stringify(cursor));
         });
@@ -138,9 +158,14 @@ module.exports = function(io) {
                 let roomIndex = checkRoomExistence(problemId, roomId, collaborations);                
                 if (roomIndex !== -1) {
                     const cachedInstructions = collaborations[problemId][roomIndex]['cachedInstructions'];
+                    const messageHistory = collaborations[problemId][roomIndex]['messageHistory'];
                     for (let ins of cachedInstructions) {
                         // send ('change', delta) to client
                         socket.emit(ins[0], ins[1]);
+                    }
+
+                    for (let message of messageHistory) {
+                        socket.emit('sendMessage', JSON.stringify(message));
                     }
                 } else {
                     console.log('No buffer to restore!')
@@ -148,6 +173,27 @@ module.exports = function(io) {
             } else {
                 console.log('There is a bug with problem with restoreBuffer!');
             }
+        });
+
+        socket.on('sendMessage', (message) => {
+            const newMessage = {};
+            newMessage['message'] = message;
+            newMessage['socketId'] = socket.id;
+            newMessage['color'] = socketIdRoomInfo[socket.id].color;
+            newMessage['name'] = socketIdRoomInfo[socket.id].name;
+
+            const problemId = socketIdRoomInfo[socket.id]['problemId'];
+            const roomId = socketIdRoomInfo[socket.id]['roomId'];
+            if (problemId in collaborations) {
+                let roomIndex = checkRoomExistence(problemId, roomId, collaborations); 
+                if (roomIndex !== -1) {
+                    collaborations[problemId][roomIndex]['messageHistory'].push(
+                        newMessage
+                    );
+                }
+            }
+            // emit change to everyone
+            forwardEvent(socket.id, 'sendMessage', JSON.stringify(newMessage));
         });
 
         socket.on('disconnect', () => {
@@ -203,16 +249,14 @@ module.exports = function(io) {
         const roomId = socketIdRoomInfo[socketId]['roomId'];
         if (problemId in collaborations) {
             let roomIndex = checkRoomExistence(problemId, roomId, collaborations);
-
             if (roomIndex !== -1) {
-                
                 const participants = collaborations[problemId][roomIndex]['participants'];
                 for (let item of participants) {
-                    if (socketId != item) {
+                    //if (socketId != item) {
                         // console.log("Forward Event: " + eventName);
                         // console.log(dataString);
-                        io.of('/problemEditor').to(item).emit(eventName, dataString);
-                    }
+                    io.of('/problemEditor').to(item).emit(eventName, dataString);
+                    //}
                 }
             } else {
                 console.log('There is a bug with room.');

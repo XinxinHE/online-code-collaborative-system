@@ -15,7 +15,8 @@ collaborations = {
         roomIndex: {
             'roomId': roomId,
             'participants': [socketId, socketId],
-            'cachedInstructions': [eventname, delta, date]
+            'cachedInstructions': [eventname, delta, date],
+            'messageHistory': [{message, socketId, color, name}]
         }
     ]
 }
@@ -71,6 +72,7 @@ socketIdToRoomInfo = {
 clientsInfo = {
     socketId: {
         'marker': marker,
+        'color': color
     }
 }
 
@@ -90,6 +92,6 @@ colorTrack = {
 participantList = { '/problemEditor#Y1yKObvO9rPH1qtmAAAE': 
                     { problemId: '1', roomId: '1', name: 'xxmk', color: '#800080' }
                   }
-
-
+newMessage = {message, name, color, socketId}
+messageHistory = [{name, color, message}]
 ```

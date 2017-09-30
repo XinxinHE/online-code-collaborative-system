@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, NgZone } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CollaborationService } from '../../services/collaboration.service';
 
@@ -15,8 +15,11 @@ export class RoomBoardComponent implements OnInit {
   URL: string;
   participantList: any;
   participantIndex: any;
+  time: number;
+
   constructor(private collaboration: CollaborationService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private zone: NgZone) { }
 
   ngOnInit() {
     this.route.params.subscribe((params: Params) => {
@@ -25,13 +28,20 @@ export class RoomBoardComponent implements OnInit {
       this.name = params['name'];
       this.URL = window.location.origin + `/problems/${this.problemId}`;
       this.collaboration.getParticipants(this.problemId, this.roomId);
+      this.collaboration.getTime();
     });
     
     this.collaboration.initParticipantList().subscribe((value) => {
-      console.log(value);
       this.participantList = value;
       this.participantIndex = Object.keys(this.participantList);
     });
-  }
 
+    this.collaboration.initTime().subscribe((date) => {
+      setInterval(() => {this.getTime(date)}, 1000);
+    });
+  }
+  getTime(date: number) {
+    this.time = (Date.now() - date) / 1000;
+    console.log(this.time);
+  }
 }
