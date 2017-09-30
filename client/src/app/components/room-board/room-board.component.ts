@@ -10,9 +10,11 @@ import { CollaborationService } from '../../services/collaboration.service';
 export class RoomBoardComponent implements OnInit {
 
   problemId: string;
-  roomId: number;
+  roomId: string;
   name: string;
   URL: string;
+  participantList: any;
+  participantIndex: any;
   constructor(private collaboration: CollaborationService,
               private route: ActivatedRoute) { }
 
@@ -22,6 +24,13 @@ export class RoomBoardComponent implements OnInit {
       this.roomId = params['roomId'];
       this.name = params['name'];
       this.URL = window.location.origin + `/problems/${this.problemId}`;
+      this.collaboration.getParticipants(this.problemId, this.roomId);
+    });
+    
+    this.collaboration.initParticipantList().subscribe((value) => {
+      console.log(value);
+      this.participantList = value;
+      this.participantIndex = Object.keys(this.participantList);
     });
   }
 

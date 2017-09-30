@@ -312,9 +312,8 @@ var EditorComponent = (function () {
         this.route.params.subscribe(function (params) {
             _this.problemId = params['id'];
             _this.roomId = params['roomId'];
-            _this.name = params['name'];
-            console.log(params);
-            console.log("roomId: " + _this.roomId);
+            // console.log(params);
+            // console.log("roomId: " + this.roomId);
         });
         this.initEditor();
     };
@@ -324,7 +323,7 @@ var EditorComponent = (function () {
         this.editor.setTheme("ace/theme/eclipse");
         this.resetEditor();
         document.getElementsByTagName('textarea')[0].focus(); // cursor position
-        this.collaboration.initEditor(this.editor, this.problemId, this.roomId, this.name);
+        this.collaboration.initEditor(this.editor, this.problemId, this.roomId);
         // content change 
         this.editor.lastAppliedChange = null;
         this.editor.on('change', function (e) {
@@ -337,7 +336,7 @@ var EditorComponent = (function () {
         // Ace keeps all the editor states (selection, scroll position, etc.) in editor.session
         this.editor.getSession().getSelection().on('changeCursor', function () {
             var cursor = _this.editor.getSession().getSelection().getCursor();
-            console.log('Cursor move', JSON.stringify(cursor));
+            // console.log('Cursor move', JSON.stringify(cursor));
             _this.collaboration.cursorMove(JSON.stringify(cursor));
         });
         // call restore buffer
@@ -583,12 +582,12 @@ var ProblemDetailComponent = (function () {
         this.route.params.subscribe(function (params) {
             // + String convert to number
             _this.problemId = params['id'];
-            _this.roomId = +params['roomId'];
+            _this.roomId = params['roomId'];
             _this.name = params['name'];
+            _this.collaboration.initCollaborationSocket(_this.problemId, _this.roomId, _this.name);
             _this.data.getProblem(+params['id'])
                 .then(function (problem) { return _this.Problem = problem; });
         });
-        this.collaboration.initCollaborationSocket(this.problemId, this.roomId, this.name);
     };
     return ProblemDetailComponent;
 }());
@@ -628,7 +627,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/problem-list/problem-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n <div class=\"row\">\n    <div class=\"col align\">\n      <span>Teamcode > Problem list</span>\n    </div>\n    <div class=\"col\">\n      <form class=\"form-inline my-2 float-right\">\n          <input class=\"form-control mr-sm-2\" type=\"text\" placeholder=\"Search\">\n          <button class=\"btn btn-outline-secondary my-2\" type=\"submit\">Search</button>\n      </form>\n    </div>\n  </div>\n\n  <app-new-problem></app-new-problem>\n  \n  <div class=\"list-group\">    \n    <span href=\"#\" class=\"list-group-item\" *ngFor=\"let problem of problems\">\n      <span class=\"col-4\">\n        <span class=\"{{'pull-left badge badge-pill difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}\">\n            {{problem.difficulty}}\n        </span>\n        <strong class=\"title\">{{problem.id}}. {{problem.name}} </strong>\n      </span>\n\n      <span class=\"col-8\" *ngIf=\"problemsAndRooms\">\n        <span *ngIf=\"problemsAndRooms[problem.id]\">\n            <span *ngFor=\"let room of problemsAndRooms[problem.id]\">\n                <span class=\"room\" \n                      (click)=\"specificRoom(problem.id, room.roomId)\" \n                      *ngIf=\"room['participants']\">\n                      {{room['participants'].length}}\n                </span>\n            </span>\n        </span>\n        <span class=\"float-right\">\n            <input href=\"#\" class=\"btn btn-newroom\" type=\"button\" value=\"New\" \n                   (click)=\"newRoom(problem.id)\"/>\n            <input href=\"#\" class=\"btn btn-newroom\" type=\"button\" value=\"Random\" />\n        </span>\n      </span>\n    </span>\n  </div>\n</div>\n\n<!-- Modal -->\n<div class=\"modal fade\" id=\"myModal\" role=\"dialog\" data-backdrop=\"static\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">Entering into the room...</h5>\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n          <span aria-hidden=\"true\">&times;</span>\n        </button>\n      </div>\n      <div class=\"modal-body\">\n        Please enter your Nick Name: \n        <input [(ngModel)]=\"name\" type=\"text\"/>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" id=\"submitBtn\" (click)=\"enterRoom()\" class=\"btn btn-primary\">Enter</button>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div class=\"container\">\n <div class=\"row\">\n    <div class=\"col align\">\n      <span>Teamcode > Problem list</span>\n    </div>\n    <div class=\"col\">\n      <form class=\"form-inline my-2 float-right\">\n          <input class=\"form-control mr-sm-2\" type=\"text\" placeholder=\"Search\">\n          <button class=\"btn btn-outline-secondary my-2\" type=\"submit\">Search</button>\n      </form>\n    </div>\n  </div>\n\n  <app-new-problem></app-new-problem>\n  \n  <div class=\"list-group\">    \n    <span href=\"#\" class=\"list-group-item\" *ngFor=\"let problem of problems\">\n      <span class=\"col-4\">\n        <span class=\"{{'pull-left badge badge-pill difficulty diff-' + problem.difficulty.toLocaleLowerCase()}}\">\n            {{problem.difficulty}}\n        </span>\n        <strong class=\"title\">{{problem.id}}. {{problem.name}} </strong>\n      </span>\n\n      <span class=\"col-8\" *ngIf=\"problemsAndRooms\">\n        <span *ngIf=\"problemsAndRooms[problem.id]\">\n            <span *ngFor=\"let room of problemsAndRooms[problem.id]\">\n                <span class=\"room\" \n                      (click)=\"specificRoom(problem.id, room.roomId)\" \n                      *ngIf=\"room['participants']\">\n                      {{room['participants'].length}}\n                </span>\n            </span>\n        </span>\n        <span class=\"float-right\">\n            <input href=\"#\" class=\"btn btn-newroom\" type=\"button\" value=\"New\" \n                   (click)=\"newRoom(problem.id)\"/>\n            <input href=\"#\" class=\"btn btn-newroom\" type=\"button\" value=\"Random\" />\n        </span>\n      </span>\n    </span>\n  </div>\n</div>\n\n<!-- Modal -->\n<div class=\"modal fade\" id=\"myModal\" role=\"dialog\">\n  <div class=\"modal-dialog\" role=\"document\">\n    <div class=\"modal-content\">\n      <div class=\"modal-header\">\n        <h5 class=\"modal-title\">Entering into the room...</h5>\n        <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n          <span aria-hidden=\"true\">&times;</span>\n        </button>\n      </div>\n      <div class=\"modal-body\">\n        Please enter your Nick Name: \n        <input [(ngModel)]=\"name\" type=\"text\"/>\n      </div>\n      <div class=\"modal-footer\">\n        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>\n        <button type=\"button\" id=\"submitBtn\" (click)=\"enterRoom()\" class=\"btn btn-primary\">Enter</button>\n      </div>\n    </div>\n  </div>\n</div>\n\n<!-- Modal -->\n<div class=\"modal fade\" id=\"fullRoom\" role=\"dialog\">\n    <div class=\"modal-dialog\" role=\"document\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\">Room is full</h5>\n          <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n          </button>\n        </div>\n        <div class=\"modal-body\">\n            Please join another room.\n        </div>\n        <div class=\"modal-footer\">\n          <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>\n        </div>\n      </div>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -693,19 +692,26 @@ var ProblemListComponent = (function () {
         });
         this.problemId = problemId;
         if (!this.problemsAndRooms[problemId] || this.problemsAndRooms[problemId].length === 0) {
-            this.roomId = 0;
+            this.roomId = '0';
         }
         else {
             var roomLength = this.problemsAndRooms[problemId].length;
-            this.roomId = parseInt(this.problemsAndRooms[problemId][roomLength - 1]['roomId']) + 1;
+            this.roomId = (parseInt(this.problemsAndRooms[problemId][roomLength - 1]['roomId']) + 1) + '';
         }
     };
     ProblemListComponent.prototype.specificRoom = function (problemId, roomId) {
-        $(function () {
-            $('#myModal').modal();
-        });
-        this.problemId = problemId;
-        this.roomId = roomId;
+        if (this.getParticipantCount(problemId, roomId) < 5) {
+            $(function () {
+                $('#myModal').modal();
+            });
+            this.problemId = problemId;
+            this.roomId = roomId;
+        }
+        else {
+            $(function () {
+                $('#fullRoom').modal();
+            });
+        }
     };
     ProblemListComponent.prototype.enterRoom = function () {
         $(function () {
@@ -713,6 +719,14 @@ var ProblemListComponent = (function () {
         });
         window.open(window.location.origin +
             ("/problems/" + this.problemId + ";roomId=" + this.roomId + ";name=" + this.name));
+    };
+    ProblemListComponent.prototype.getParticipantCount = function (problemId, roomId) {
+        for (var _i = 0, _a = this.problemsAndRooms[problemId]; _i < _a.length; _i++) {
+            var room = _a[_i];
+            if (room['roomId'] === roomId) {
+                return room.participants.length;
+            }
+        }
     };
     return ProblemListComponent;
 }());
@@ -739,7 +753,7 @@ exports = module.exports = __webpack_require__("../../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, ".timer {\n    width: 200px;\n    height: 50px;\n    text-align: center;\n    padding: .8em;\n    margin: 30px auto;\n    background-color: #e6e6e6;\n}", ""]);
+exports.push([module.i, ".timer {\n    width: 200px;\n    height: 50px;\n    text-align: center;\n    padding: .8em;\n    margin: 30px auto;\n    background-color: #e6e6e6;\n}\n\n.user {\n    margin: 5px 0;\n}\n.user-initial {\n    display: inline-block;\n    width: 30px;\n    padding: 2px 0;\n    margin-right: 6px;\n    color: #ffffff;\n    /* font-size: 1rem; */\n    font-weight: bold;\n    text-align: center;\n}", ""]);
 
 // exports
 
@@ -752,7 +766,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/room-board/room-board.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"card\">\n    <div class=\"card-block\">\n      <h4 class=\"card-title\">Room URL</h4>\n      <p class=\"card-text\">{{URL}}</p>\n      <div class=\"timer\">43 : 20</div>\n      <div>User List</div>\n      <app-chat-box></app-chat-box>\n    </div>\n  </div>"
+module.exports = "<div class=\"card\">\n    <div class=\"card-block\">\n      <h4 class=\"card-title\">Room Link</h4>\n      <p class=\"card-text\">{{URL}}</p>\n      <div class=\"timer\">43 : 20</div>\n      <div *ngIf=\"participantList\">\n        <h4 class=\"card-title\">Room Members</h4>\n        <div class=\"user\" *ngFor=\"let id of participantIndex\">\n          <span class=\"user-initial\" [ngStyle]=\"{'background-color': participantList[id].color}\">\n            {{participantList[id].name[0]}}\n          </span>\n          <span>{{participantList[id].name}}</span>\n        </div>\n      </div>\n      <app-chat-box></app-chat-box>\n    </div>\n  </div>"
 
 /***/ }),
 
@@ -788,6 +802,12 @@ var RoomBoardComponent = (function () {
             _this.roomId = params['roomId'];
             _this.name = params['name'];
             _this.URL = window.location.origin + ("/problems/" + _this.problemId);
+            _this.collaboration.getParticipants(_this.problemId, _this.roomId);
+        });
+        this.collaboration.initParticipantList().subscribe(function (value) {
+            console.log(value);
+            _this.participantList = value;
+            _this.participantIndex = Object.keys(_this.participantList);
         });
     };
     return RoomBoardComponent;
@@ -833,9 +853,9 @@ var CollaborationService = (function () {
         this.clientNum = 0;
         // behaviour subject: must initialize with a value
         this._problemsAndRooms = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__["Subject"]();
+        this._participantList = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Subject__["Subject"]();
     }
     CollaborationService.prototype.initSocket = function () {
-        // namespace: /
         this.problemListSocket = io(window.location.origin);
     };
     CollaborationService.prototype.getProblemsAndRooms = function () {
@@ -853,12 +873,19 @@ var CollaborationService = (function () {
          * query: the query member is passed to the server on connection and parsed as a CGI style query string
          * Retrieved by socket.handshake.query at the server side
          */
-        // namespace: problemEditor 
-        this.collaborationSocket = io(window.location.origin + '/problemEditor', { query: 'problemId=' + problemId + '&roomId=' + roomId });
+        this.collaborationSocket = io(window.location.origin + '/problemEditor', { query: 'problemId=' + problemId +
+                '&roomId=' + roomId +
+                '&name=' + name });
     };
-    CollaborationService.prototype.getRoomParticipants = function (problemId, roomId) {
+    CollaborationService.prototype.initParticipantList = function () {
+        var _this = this;
+        this.collaborationSocket.on('getParticipants', function (value) {
+            console.log(value);
+            _this._participantList.next(value);
+        });
+        return this._participantList.asObservable();
     };
-    CollaborationService.prototype.initEditor = function (editor, problemId, roomId, name) {
+    CollaborationService.prototype.initEditor = function (editor, problemId, roomId) {
         var _this = this;
         this.collaborationSocket.on('change', function (delta) {
             console.log('Collaboration: editor changed by ' + delta);
@@ -893,8 +920,6 @@ var CollaborationService = (function () {
             var Range = ace.require('ace/range').Range;
             var newMarker = session.addMarker(new Range(x, y, x, y + 5), 'editor_cursor_' + markerId, null, true);
             _this.clientsInfo[changeClientId]['marker'] = newMarker;
-            console.log("@@@@@@@@@@@@@@@@@@@@@@@@@");
-            console.log(newMarker);
         });
     };
     CollaborationService.prototype.change = function (delta) {
@@ -905,6 +930,12 @@ var CollaborationService = (function () {
     };
     CollaborationService.prototype.restoreBuffer = function () {
         this.collaborationSocket.emit('restoreBuffer');
+    };
+    CollaborationService.prototype.getParticipants = function (problemId, roomId) {
+        var roomInfo = {};
+        roomInfo['problemId'] = problemId;
+        roomInfo['roomId'] = roomId;
+        this.collaborationSocket.emit('getParticipants', roomInfo);
     };
     return CollaborationService;
 }());

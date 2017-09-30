@@ -6,3 +6,17 @@
     margin: 30px auto;
     background-color: #e6e6e6;
 }
+
+.user {
+    margin: 5px 0;
+}
+.user-initial {
+    display: inline-block;
+    width: 30px;
+    padding: 2px 0;
+    margin-right: 6px;
+    color: #ffffff;
+    /* font-size: 1rem; */
+    font-weight: bold;
+    text-align: center;
+}

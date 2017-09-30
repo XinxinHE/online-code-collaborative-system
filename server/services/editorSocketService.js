@@ -1,4 +1,5 @@
 const redisClient = require('../modules/redisClient');
+const COLORS = require('../assets/COLORS');
 const TIMEOUT_IN_SECONDS = 3600;
 
 module.exports = function(io) {
@@ -9,18 +10,22 @@ module.exports = function(io) {
     io.on('connection', (socket) => {
         console.log("**********************");
         console.log(collaborations);
+        console.log(socketIdRoomInfo);
         socket.emit('getProblemsAndRooms', collaborations);
     });
 
     io.of('/problemEditor').on('connection', (socket) => {
-        console.log("######### " + socket.id + " connected ############");        
+        console.log("######### " + socket.id + " connected ############");
         const problemId = socket.handshake.query['problemId'];
         const roomId = socket.handshake.query['roomId'];
         const name = socket.handshake.query['name'];
-        
-        console.log(roomId);
-        socketIdRoomInfo[socket.id] = { 'problemId': problemId, 'roomId': roomId, 'name': name};
-        
+        const color = selectAvailableColor(problemId, roomId);
+
+        socketIdRoomInfo[socket.id] = { 'problemId': problemId,
+                                        'roomId': roomId,
+                                        'name': name,
+                                        'color': color};
+
         if (problemId in collaborations) {
             let roomIndex = checkRoomExistence(problemId, roomId, collaborations);
             if (roomIndex !== -1) {
@@ -47,8 +52,8 @@ module.exports = function(io) {
                         }
                     }
                     collaborations[problemId][newRoomIndex]['participants'].push(socket.id);
-                    console.log(collaborations);                    
-                    io.emit('getProblemsAndRooms', collaborations);                    
+                    // console.log(collaborations);                    
+                    io.emit('getProblemsAndRooms', collaborations);                  
                 });
             }            
         } else {
@@ -81,6 +86,23 @@ module.exports = function(io) {
         }
         console.log(collaborations);
         io.emit('getProblemsAndRooms', collaborations);
+
+        socket.on('getParticipants', (roomInfo) => {
+            const problemId = roomInfo['problemId'];
+            const roomId = roomInfo['roomId'];
+            const participantList = {};
+
+            if (problemId in collaborations) {
+                console.log(collaborations[problemId]);
+                let roomIndex = checkRoomExistence(problemId, roomId, collaborations);                
+                if (roomIndex !== -1) {
+                    for (let one of collaborations[problemId][roomIndex].participants) {
+                        participantList[one] = Object.assign({}, socketIdRoomInfo[one]);
+                    }   
+                }
+            } 
+            io.of('/problemEditor').emit('getParticipants', participantList); 
+        });
 
         socket.on('change', delta => {
             // console.log('change' + ' ' + delta + ' ' + Date.now());
@@ -131,7 +153,7 @@ module.exports = function(io) {
         socket.on('disconnect', () => {
             const problemId = socketIdRoomInfo[socket.id]['problemId'];
             const roomId = socketIdRoomInfo[socket.id]['roomId'];
-            console.log("Disconnect: " + problemId + " " + roomId);
+            // console.log("Disconnect: " + problemId + " " + roomId);
             let foundAndRemove = false;
             if (problemId in collaborations) {
                 let roomIndex = checkRoomExistence(problemId, roomId, collaborations);
@@ -187,8 +209,8 @@ module.exports = function(io) {
                 const participants = collaborations[problemId][roomIndex]['participants'];
                 for (let item of participants) {
                     if (socketId != item) {
-                        console.log("Forward Event: " + eventName);
-                        console.log(dataString);
+                        // console.log("Forward Event: " + eventName);
+                        // console.log(dataString);
                         io.of('/problemEditor').to(item).emit(eventName, dataString);
                     }
                 }
@@ -209,5 +231,23 @@ module.exports = function(io) {
             }
         }
         return -1;
+    }
+
+    let selectAvailableColor = function(problemId, roomId) {
+        if (problemId in collaborations) {
+            let roomIndex = checkRoomExistence(problemId, roomId, collaborations);
+            let usedColors = [];    
+            if (roomIndex !== -1) {
+                for (let p of collaborations[problemId][roomIndex].participants) {
+                    usedColors.push(socketIdRoomInfo[p].color);
+                }
+                for (let c of COLORS) {
+                    if (usedColors.indexOf(c) === -1) {
+                        return c;
+                    }
+                }
+            }
+        }
+        return COLORS[0];
     }
 }

@@ -4,11 +4,13 @@
 3. Built a user-code executor service which can build and execute user’s code (Flask, Docker)   
 4. Refactored and improved system throughput by decoupling services using RESTful API and loading balancing by Nginx (REST API, Nginx)
 
+socket.broadcast.emit() behaves similar to io.sockets.emit , but instead of emitting to all connected sockets it will emit to all connected socket except the one it is being called on. So in this case the socket referenced by socket will not receive the event.
+
 ```javascript
 
 // editorSocketService.js 
 // collaborations json data schema
-collaborations: {
+collaborations = {
     problemId: [
         roomIndex: {
             'roomId': roomId,
@@ -20,7 +22,7 @@ collaborations: {
 
 // collaborations json examples
 
-collaborations: {
+collaborations = {
   '1': [{
             'roomId': 0,
             'participants': ['/problemEditor#8KM_3IUgvibmPkYTAAAB', '/problemEditor#APzuekqueL6CF06HAAAC'],
@@ -35,7 +37,7 @@ collaborations: {
 }
 
 // cursor change
-cursor: {
+cursor = {
     "row":1,
     "column":13,
     "socketId":"/problemEditor#8KM_3IUgvibmPkYTAAAB"
@@ -64,6 +66,30 @@ socketIdToRoomInfo = {
 }
 
 // client side: collaboration.service.ts
-// 
+// clientsInfo
+
+clientsInfo = {
+    socketId: {
+        'marker': marker,
+    }
+}
+
+colorTrack = {
+    problemId: {
+        roomId: {
+            color1: true,
+            color2: false,
+            color3: false,
+            color4: true,
+            color5: true,
+        }
+    }
+}
+
+
+participantList = { '/problemEditor#Y1yKObvO9rPH1qtmAAAE': 
+                    { problemId: '1', roomId: '1', name: 'xxmk', color: '#800080' }
+                  }
+
 
 ```

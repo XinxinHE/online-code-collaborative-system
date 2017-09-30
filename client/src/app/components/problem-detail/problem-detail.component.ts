@@ -11,7 +11,7 @@ import { CollaborationService } from '../../services/collaboration.service';
 export class ProblemDetailComponent implements OnInit {
   Problem: Problem;
   problemId: string;
-  roomId: number;
+  roomId: string;
   name: string;
   constructor(
     private collaboration: CollaborationService,
@@ -24,13 +24,12 @@ export class ProblemDetailComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       // + String convert to number
       this.problemId = params['id'];
-      this.roomId = +params['roomId'];
+      this.roomId = params['roomId'];
       this.name = params['name'];
+      this.collaboration.initCollaborationSocket(this.problemId, this.roomId, this.name);
 
       this.data.getProblem(+params['id'])
         .then(problem => this.Problem = problem);
     });
-
-    this.collaboration.initCollaborationSocket(this.problemId, this.roomId, this.name);
   }
 }
