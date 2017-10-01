@@ -1,11 +1,11 @@
-# online-code-collaborative-system
+# Teamcode: online-code-collaborative-system
+
 1. Implemented a web-based collaborative code editor which supports multiple users editing simultaneously (ACE, Socket.io, Redis)   
 2. Designed and developed a single-page web application for coding problems (Angular2, Node.js, MongoDB)   
 3. Built a user-code executor service which can build and execute user’s code (Flask, Docker)   
 4. Refactored and improved system throughput by decoupling services using RESTful API and loading balancing by Nginx (REST API, Nginx)
 
-socket.broadcast.emit() behaves similar to io.sockets.emit , but instead of emitting to all connected sockets it will emit to all connected socket except the one it is being called on. So in this case the socket referenced by socket will not receive the event.
-
+## Data structures used with socket IO
 ```javascript
 
 // editorSocketService.js 
@@ -98,4 +98,5 @@ participantList = { '/problemEditor#Y1yKObvO9rPH1qtmAAAE':
                   }
 newMessage = {message, name, color, socketId}
 messageHistory = [{name, color, message}]
+
 ```
