@@ -16,7 +16,11 @@ collaborations = {
             'roomId': roomId,
             'participants': [socketId, socketId],
             'cachedInstructions': [eventname, delta, date],
-            'messageHistory': [{message, socketId, color, name}]
+            'messageHistory': [{'message': message, 
+                                'socketId': socketId,
+                                'color': color, 
+                                'name': name}]
+            'startDate': date
         }
     ]
 }

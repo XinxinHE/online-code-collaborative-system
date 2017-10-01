@@ -27,12 +27,13 @@ export class RoomBoardComponent implements OnInit {
       this.roomId = params['roomId'];
       this.name = params['name'];
       this.URL = window.location.origin + `/problems/${this.problemId}`;
-      this.collaboration.getParticipants(this.problemId, this.roomId);
+      this.collaboration.getParticipants();
       this.collaboration.getTime();
     });
     
     this.collaboration.initParticipantList().subscribe((value) => {
-      this.participantList = value;
+      console.log(value);
+      this.participantList = JSON.parse(value);
       this.participantIndex = Object.keys(this.participantList);
     });
 
@@ -42,6 +43,5 @@ export class RoomBoardComponent implements OnInit {
   }
   getTime(date: number) {
     this.time = (Date.now() - date) / 1000;
-    console.log(this.time);
   }
 }

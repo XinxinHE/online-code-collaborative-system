@@ -60,7 +60,7 @@ export class EditorComponent implements OnInit {
     document.getElementsByTagName('textarea')[0].focus();  // cursor position
 
     this.collaboration.initEditor(this.editor, this.problemId, this.roomId);
-
+    // this.initCursor();
     // content change 
     this.editor.lastAppliedChange = null;
     this.editor.on('change', e => {
@@ -68,8 +68,7 @@ export class EditorComponent implements OnInit {
       if (this.editor.lastAppliedChange != e) {
         this.collaboration.change(JSON.stringify(e));
       }
-    });
-
+    });    
     // cursor change 
     // Ace keeps all the editor states (selection, scroll position, etc.) in editor.session
     this.editor.getSession().getSelection().on('changeCursor', () => {
@@ -80,9 +79,12 @@ export class EditorComponent implements OnInit {
 
     // call restore buffer
     this.collaboration.restoreBuffer();
-
   }
 
+  initCursor():void {
+    const cursor = this.editor.getSession().getSelection().getCursor();
+    this.collaboration.cursorMove(JSON.stringify(cursor));
+  }
   setLanguage(language: string): void {
     this.language = language;
     this.resetEditor();

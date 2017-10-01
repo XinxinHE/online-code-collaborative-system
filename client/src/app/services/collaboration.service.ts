@@ -54,7 +54,7 @@ export class CollaborationService {
   initEditor(editor: any, problemId: string, roomId: string): void {
 
     this.collaborationSocket.on('change', (delta: string) => {
-      // console.log('Collaboration: editor changed by ' + delta);
+      console.log('Collaboration: editor changed by ' + delta);
       delta = JSON.parse(delta);
       editor.lastAppliedChange = delta;
       // apply changes received from server to ace editor
@@ -125,10 +125,7 @@ export class CollaborationService {
     this.collaborationSocket.emit('restoreBuffer');
   }
 
-  getParticipants(problemId: string, roomId: string): void {
-    let roomInfo = {};
-    roomInfo['problemId'] = problemId;
-    roomInfo['roomId'] = roomId;
-    this.collaborationSocket.emit('getParticipants', roomInfo);    
+  getParticipants(): void {
+    this.collaborationSocket.emit('getParticipants');    
   }
 }

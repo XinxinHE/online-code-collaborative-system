@@ -9,7 +9,7 @@ module.exports = function(io) {
 
     io.on('connection', (socket) => {
         console.log("**********************");     
-        // console.log(collaborations);
+        console.log(collaborations);
         // console.log(socketIdRoomInfo);
         socket.emit('getProblemsAndRooms', collaborations);
     });
@@ -87,29 +87,19 @@ module.exports = function(io) {
                         'startDate': startTime
                     }
                 }
-                
                 collaborations[problemId][0]['participants'].push(socket.id);
                 io.emit('getProblemsAndRooms', collaborations);
             });
         }
         io.emit('getProblemsAndRooms', collaborations);
 
-        socket.on('getParticipants', (roomInfo) => {
-            const problemId = roomInfo['problemId'];
-            const roomId = roomInfo['roomId'];
+        socket.on('getParticipants', () => {
+            const problemId = socketIdRoomInfo[socket.id]['problemId'];
+            const roomId = socketIdRoomInfo[socket.id]['roomId'];
             const participantList = {};
-
-            if (problemId in collaborations) {
-                console.log(collaborations[problemId]);
-                let roomIndex = checkRoomExistence(problemId, roomId, collaborations);                
-                if (roomIndex !== -1) {
-                    for (let one of collaborations[problemId][roomIndex].participants) {
-                        participantList[one] = Object.assign({}, socketIdRoomInfo[one]);
-                    }   
-                }
-            } 
-            io.of('/problemEditor').emit('getParticipants', participantList); 
+            updateParticipant(problemId, roomId, socket.id);
         });
+        
 
         socket.on('getTime', ()=> {
             const problemId = socketIdRoomInfo[socket.id]['problemId'];
@@ -124,7 +114,7 @@ module.exports = function(io) {
         });
 
         socket.on('change', delta => {
-            // console.log('change' + ' ' + delta + ' ' + Date.now());
+            console.log('change' + ' ' + delta + ' ' + Date.now());
             // put change into collaborations cachedInstruction
             const problemId = socketIdRoomInfo[socket.id]['problemId'];
             const roomId = socketIdRoomInfo[socket.id]['roomId'];
@@ -239,8 +229,22 @@ module.exports = function(io) {
                 console.log('There is a bug with problemId when disconnect!');
             }
             io.emit('getProblemsAndRooms', collaborations);
+            updateParticipant(problemId, roomId, socket.id);
         });
     });
+    
+    const updateParticipant = function(problemId, roomId, socketId) {
+        const participantList = {};
+        if (problemId in collaborations) {
+            let roomIndex = checkRoomExistence(problemId, roomId, collaborations);                
+            if (roomIndex !== -1) {
+                for (let one of collaborations[problemId][roomIndex]['participants']) {
+                    participantList[one] = Object.assign({}, socketIdRoomInfo[one]);
+                }  
+            }
+        }
+        forwardEvent(socketId, 'getParticipants', JSON.stringify(participantList));
+    };
 
     const forwardEvent = function(socketId, eventName, dataString) {
         const data = JSON.parse(dataString);
@@ -251,12 +255,16 @@ module.exports = function(io) {
             let roomIndex = checkRoomExistence(problemId, roomId, collaborations);
             if (roomIndex !== -1) {
                 const participants = collaborations[problemId][roomIndex]['participants'];
-                for (let item of participants) {
-                    //if (socketId != item) {
-                        // console.log("Forward Event: " + eventName);
-                        // console.log(dataString);
-                    io.of('/problemEditor').to(item).emit(eventName, dataString);
-                    //}
+                if (eventName === 'change') {
+                    for (let item of participants) {
+                        if (socketId !== item) {
+                            io.of('/problemEditor').to(item).emit(eventName, dataString);
+                        }
+                    }
+                } else {
+                    for (let item of participants) {
+                        io.of('/problemEditor').to(item).emit(eventName, dataString);
+                    }
                 }
             } else {
                 console.log('There is a bug with room.');
